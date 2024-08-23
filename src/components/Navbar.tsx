@@ -1,5 +1,6 @@
 import React from 'react';
 import { MdWbSunny,MdMyLocation, MdOutlineLocationOn } from 'react-icons/md';
+import Searchbox from './Searchbox';
 
 type Props = {}
 
@@ -15,7 +16,7 @@ export default function Navbar({}: Props) {
                 <MdMyLocation className="text-2xl text-slate-800 hover:opacity-70 cursor-pointer"/>
                 <MdOutlineLocationOn/>
                 <p className="text-slate-900/80 text-sm">India</p>
-                
+                <Searchbox value={''} onChange={undefined} onSubmit={undefined} />
             </section>
         </div>
     </div>
