@@ -131,7 +131,7 @@ export default function TodayWeather({}: Props) {
   return (
     <div className="p-4 space-y-4 bg-gray-100">
       <div className="text-2xl font-bold mb-7">
-        <span className="border-b-4 border-black">Today Weather</span>
+        <span className="border-b-4 border-black">Today <span className="text-yellow-400">{location.city}</span> Weather</span>
       </div>
       <div className="text-2xl flex flex-row font-bold">
         <span className="text-2xl ">{new Date(currentDate).toLocaleDateString('en-US', { weekday: 'long' })}</span>
