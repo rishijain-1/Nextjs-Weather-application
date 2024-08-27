@@ -12,7 +12,6 @@ type DailyWeatherData = {
     temperature_2m_max: number[];
 };
 
-
 interface HourlyData {
     time: string[]; // ISO8601 formatted strings
     temperature_2m: number[]; // Temperature in °C
@@ -68,6 +67,7 @@ const Forecast: React.FC = () => {
                 console.error("Error fetching data:", error);
             }
         };
+
         const fetchLocation = () => {
             if (navigator.geolocation) {
               navigator.geolocation.getCurrentPosition(async (position) => {
@@ -81,7 +81,7 @@ const Forecast: React.FC = () => {
                   const country = geocodeData.countryName;
       
                   setLocation({ city, state, country });
-                  console.log(city,state,country);
+                  console.log(city, state, country);
                   fetchData(city, state, country);
                 } catch (error) {
                   console.error("Error fetching location data:", error);
@@ -92,7 +92,6 @@ const Forecast: React.FC = () => {
             }
           };
 
-
         fetchLocation();
     }, []);
 
@@ -100,51 +99,68 @@ const Forecast: React.FC = () => {
         return <div><Loading/></div>;
     }
 
-    
+    // function to group hourly data by date
+    const groupHourlyDataByDate = () => {
+        const groupedData: { [date: string]: { time: string; temperature: number; precipitation: number }[] } = {};
+
+        forecastWeatherData.hourly.time.forEach((time, index) => {
+            const date = time.split("T")[0]; // Extract the date part (YYYY-MM-DD)
+            const temperature = forecastWeatherData.hourly.temperature_2m[index];
+            const precipitation = forecastWeatherData.hourly.precipitation[index];
+
+            if (!groupedData[date]) {
+                groupedData[date] = [];
+            }
+
+            groupedData[date].push({
+                time,
+                temperature,
+                precipitation,
+            });
+        });
+
+        return groupedData;
+    };
+
+    const groupedHourlyData = groupHourlyDataByDate();
 
     return (
         <div className="p-4 space-y-4 bg-gray-100">
             <div className="text-2xl font-bold mb-7">
                 14-Day Weather Forecast
             </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7">  
-                {forecastWeatherData.daily.time.map((date, index) => {
-                    return(<DayWeather
-                        key={index}
-                        date={date}
-                        maxTemp={forecastWeatherData.daily.temperature_2m_max[index]}
-                    />
-                )
-                })}
+            <div className="grid grid-col-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2">
+                {forecastWeatherData.daily.time.map((date, index) => (
+                    <div key={index}>
+                        <DayWeather
+                            date={date}
+                            maxTemp={forecastWeatherData.daily.temperature_2m_max[index]}
+                        />
+                        <div className="col-span-2 p-4 bg-yellow-200 rounded-md shadow-md">
+                            <div className="overflow-x-auto">
+                                <div className="flex">
+                                    {groupedHourlyData[date]?.map((hourData, hourIndex) => {
+                                        const icon = hourData.precipitation > 0
+                                            ? <CloudRainIcon className="w-8 h-8" />
+                                            : <CloudIcon className="w-8 h-8" />;
+                                        
+                                        return (
+                                            <HourlyWeather
+                                                key={hourIndex}
+                                                time={hourData.time}
+                                                temperature={hourData.temperature}
+                                                icon={icon}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ))}
             </div>
         </div>
     );
 };
 
-
 export default Forecast;
-
-
-//for forcast daily temp
-/**<div className="col-span-2 p-4 bg-white rounded-md shadow-md">
-<div className="overflow-x-auto">
-    <div className="flex">
-        {
-            forecastWeatherData.hourly.time.map((time, index) => {
-                const temp = forecastWeatherData.hourly.temperature_2m[index];
-                const icon = forecastWeatherData.hourly.precipitation[index] > 0 ? <CloudRainIcon className="w-8 h-8" /> : <CloudIcon className="w-8 h-8" />;
-               
-                return (
-                    
-                    <HourlyWeather
-                        key={index}
-                        time={time}
-                        temperature={temp}
-                        icon={icon}                                    
-                    />
-                );
-            })
-        }
-    </div>
-</div>
-</div>*/
