@@ -16,7 +16,7 @@ const HourlyWeather: React.FC<HourlyWeatherProps> = ({ time, temperature, icon }
 
   return (
     <div className="flex flex-col justify-center items-center md:px-7">
-      <div className="text-sm ">{formattedTime}</div>
+      <div className="text-sm w-16 text-center ">{formattedTime}</div>
       <div className="w-8 h-8 md:w-10 md:h-10">{icon}</div>
       <div className="text-sm ">{temperature}°</div>
     </div>
