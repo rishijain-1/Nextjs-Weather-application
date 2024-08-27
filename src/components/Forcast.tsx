@@ -7,6 +7,7 @@ import CloudRainIcon from './icons/CloudRainIcon';
 import CloudIcon from './icons/CloudIcon';
 import Loading from './Loader/Loading';
 import { fetchForecastWeather } from '@/api/ForcastApi';
+import { fetchUserLocation } from '@/api/DefaultUserLocationApi';
 
 type DailyWeatherData = {
     time: string[];
@@ -47,32 +48,14 @@ const Forecast: React.FC = () => {
     const [location, setLocation] = useState({ city: "", state: "", country: "" });
 
     useEffect(() => {
-        const fetchLocation = () => {
-            if (navigator.geolocation) {
-              navigator.geolocation.getCurrentPosition(async (position) => {
-                const { latitude, longitude } = position.coords;
-                
-                try {
-                  const geocodeResponse = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`);
-                  const geocodeData = await geocodeResponse.json();
-                  const city = geocodeData.city;
-                  const state = geocodeData.principalSubdivision;
-                  const country = geocodeData.countryName;
-      
-                  setLocation({ city, state, country });
-                  console.log(city, state, country);
-                  const data = await fetchForecastWeather(city, state, country); // Use the utility function
-                  setForecastWeatherData(data);
-                } catch (error) {
-                  console.error("Error fetching location data:", error);
-                }
-              });
-            } else {
-              console.error("Geolocation is not supported by this browser.");
-            }
-          };
+        const fetchuserLocation = async()=>{
+            const location = await fetchUserLocation();
+            setLocation(location);
+            const data = await fetchForecastWeather(location.city,location.state,location.country);
+            setForecastWeatherData(data);
+        }
 
-        fetchLocation();
+        fetchuserLocation();
     }, []);
 
     if (!forecastWeatherData) {

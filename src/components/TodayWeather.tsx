@@ -10,6 +10,7 @@ import GaugeIcon from "./icons/GaugeIcon";
 import SunsetIcon from "./icons/SunsetIcon";
 import WindIcon from "./icons/WindIcon";
 import { fetchWeatherData } from "@/api/TodayWeatherApi";
+import { fetchUserLocation } from "@/api/DefaultUserLocationApi";
 
 type Props = {};
 
@@ -73,33 +74,18 @@ export default function TodayWeather({}: Props) {
   const [location, setLocation] = useState({ city: "", state: "", country: "" });
 
     useEffect(() => {
-      const fetchLocation = () => {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(async (position) => {
-            const { latitude, longitude } = position.coords;
-  
-            try {
-              const geocodeResponse = await fetch(
-                `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
-              );
-              const geocodeData = await geocodeResponse.json();
-              const city = geocodeData.city;
-              const state = geocodeData.principalSubdivision;
-              const country = geocodeData.countryName;
-  
-              setLocation({ city, state, country });
-              const data = await fetchWeatherData(city, state, country);
-              setWeatherData(data);
-            } catch (error) {
-              console.error("Error fetching location data:", error);
-            }
-          });
-        } else {
-          console.error("Geolocation is not supported by this browser.");
+      const loadLocationAndWeather = async () => {
+        try {
+          const locationData = await fetchUserLocation();
+          setLocation(locationData);
+          const data = await fetchWeatherData(locationData.city, locationData.state, locationData.country);
+          setWeatherData(data);
+        } catch (error) {
+          console.error(error);
         }
       };
   
-      fetchLocation();
+      loadLocationAndWeather();
     }, []);
 
     if (!weatherData)  return <div className="flex justify-center items-center h-screen"><Loading/></div>;

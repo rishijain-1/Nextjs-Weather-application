@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import DayWeather from './DayWeather';
 import Loading from './Loader/Loading';
 import { fetchHistoryWeather } from '@/api/HistoryApi';
+import { fetchUserLocation } from '@/api/DefaultUserLocationApi';
 
 type HistoryWeatherData = {
     latitude: number;
@@ -43,34 +44,13 @@ export const WeatherHistory = () => {
 
     
         useEffect(() => {
-        
-            const fetchLocation = () => {
-                if (navigator.geolocation) {
-                  navigator.geolocation.getCurrentPosition(async (position) => {
-                    const { latitude, longitude } = position.coords;
-                    
-                    try {
-                      const geocodeResponse = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`);
-                      const geocodeData = await geocodeResponse.json();
-                      const city = geocodeData.city;
-                      const state = geocodeData.principalSubdivision;
-                      const country = geocodeData.countryName;
-          
-                      setLocation({ city, state, country });
-                      console.log(city,state,country);
-                      const data = await fetchHistoryWeather(city, state, country); // Use the utility function
-                        setHistoryWeatherData(data);
-                    } catch (error) {
-                      console.error("Error fetching location data:", error);
-                    }
-                  });
-                } else {
-                  console.error("Geolocation is not supported by this browser.");
-                }
-              };
-    
-    
-            fetchLocation();
+            const Defaultuserlocation=async()=>{
+                const location = await fetchUserLocation();
+                setLocation(location);
+                const data = await fetchHistoryWeather(location.city,location.state,location.country);
+                setHistoryWeatherData(data);
+            }
+            Defaultuserlocation();
         }, []);
         if(!HistoryWeatherData){
             return <div><Loading/></div>
