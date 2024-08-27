@@ -3,6 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import DayWeather from './DayWeather'; // Adjust the import path if necessary
 import HourlyWeather from './HourlyWeather';
+import CloudRainIcon from './icons/CloudRainIcon';
+import CloudIcon from './icons/CloudIcon';
+import Loading from './Loader/Loading';
 
 type DailyWeatherData = {
     time: string[];
@@ -41,19 +44,20 @@ interface ForcastWeatherData {
 
 const Forecast: React.FC = () => {
     const [forecastWeatherData, setForecastWeatherData] = useState<ForcastWeatherData | null>(null);
+    const [location, setLocation] = useState({ city: "", state: "", country: "" });
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchData = async (city: string, state: string, country: string) => {
             try {
-                const response = await fetch("http://165.22.215.22/api/forecast", {
+                const response = await fetch(`http://165.22.215.22/api/forecast`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        city: "Kota",
-                        state: "Rajasthan",
-                        country: "India",
+                        city,
+                        state,
+                        country,
                     }),
                 });
 
@@ -64,12 +68,36 @@ const Forecast: React.FC = () => {
                 console.error("Error fetching data:", error);
             }
         };
+        const fetchLocation = () => {
+            if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(async (position) => {
+                const { latitude, longitude } = position.coords;
+                
+                try {
+                  const geocodeResponse = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`);
+                  const geocodeData = await geocodeResponse.json();
+                  const city = geocodeData.city;
+                  const state = geocodeData.principalSubdivision;
+                  const country = geocodeData.countryName;
+      
+                  setLocation({ city, state, country });
+                  console.log(city,state,country);
+                  fetchData(city, state, country);
+                } catch (error) {
+                  console.error("Error fetching location data:", error);
+                }
+              });
+            } else {
+              console.error("Geolocation is not supported by this browser.");
+            }
+          };
 
-        fetchData();
+
+        fetchLocation();
     }, []);
 
     if (!forecastWeatherData) {
-        return <div>Loading...</div>;
+        return <div><Loading/></div>;
     }
 
     
@@ -79,18 +107,44 @@ const Forecast: React.FC = () => {
             <div className="text-2xl font-bold mb-7">
                 14-Day Weather Forecast
             </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7">
-                {forecastWeatherData.daily.time.map((date, index) => (
-                    <DayWeather
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7">  
+                {forecastWeatherData.daily.time.map((date, index) => {
+                    return(<DayWeather
                         key={index}
                         date={date}
                         maxTemp={forecastWeatherData.daily.temperature_2m_max[index]}
                     />
-                ))}
-                
+                )
+                })}
             </div>
         </div>
     );
 };
 
+
 export default Forecast;
+
+
+//for forcast daily temp
+/**<div className="col-span-2 p-4 bg-white rounded-md shadow-md">
+<div className="overflow-x-auto">
+    <div className="flex">
+        {
+            forecastWeatherData.hourly.time.map((time, index) => {
+                const temp = forecastWeatherData.hourly.temperature_2m[index];
+                const icon = forecastWeatherData.hourly.precipitation[index] > 0 ? <CloudRainIcon className="w-8 h-8" /> : <CloudIcon className="w-8 h-8" />;
+               
+                return (
+                    
+                    <HourlyWeather
+                        key={index}
+                        time={time}
+                        temperature={temp}
+                        icon={icon}                                    
+                    />
+                );
+            })
+        }
+    </div>
+</div>
+</div>*/
