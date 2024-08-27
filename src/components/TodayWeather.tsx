@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import HourlyWeather from "./HourlyWeather";
 import Loading from "./Loader/Loading";
-import CloudIcon from "./icons/CLoudIcon";
+import CloudIcon from "./icons/CloudIcon";
 import CloudRainIcon from "./icons/CloudRainIcon";
 import DropletIcon from "./icons/DropletIcon";
 import EyeIcon from "./icons/EyeIcon";
@@ -69,9 +69,10 @@ interface DailyData {
 
 export default function TodayWeather({}: Props) {
     const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+    const [location, setLocation] = useState({ city: "", state: "", country: "" });
   
     useEffect(() => {
-      const fetchData = async () => {
+      const fetchData = async (city: string, state: string, country: string) => {
         try {
           const response = await fetch("http://165.22.215.22/api/location", {
             method: "POST",
@@ -79,21 +80,44 @@ export default function TodayWeather({}: Props) {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              city: "kota",
-              state: "Rajasthan",
-              country: "India",
+              city,
+              state,
+              country,
             }),
           });
   
           const data = await response.json();
-          console.log(data);
+         
           setWeatherData(data);
         } catch (error) {
           console.error("Error fetching data:", error);
         }
       };
+      const fetchLocation = () => {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(async (position) => {
+            const { latitude, longitude } = position.coords;
+            
+            try {
+              const geocodeResponse = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`);
+              const geocodeData = await geocodeResponse.json();
+              const city = geocodeData.city;
+              const state = geocodeData.principalSubdivision;
+              const country = geocodeData.countryName;
   
-      fetchData();
+              setLocation({ city, state, country });
+              console.log(city,state,country);
+              fetchData(city, state, country);
+            } catch (error) {
+              console.error("Error fetching location data:", error);
+            }
+          });
+        } else {
+          console.error("Geolocation is not supported by this browser.");
+        }
+      };
+  
+      fetchLocation();
     }, []);
 
  if(!weatherData) return <div className="flex justify-center items-center h-screen"><Loading/></div>;
@@ -101,6 +125,7 @@ export default function TodayWeather({}: Props) {
   const currentTemperature = weatherData.hourly.temperature_2m[0];
   const minTemperature = weatherData.daily.temperature_2m_min[0];
   const maxTemperature = weatherData.daily.temperature_2m_max[0];
+  const currentDate=weatherData.daily.time[0];
   const weatherDescription = "Partly Cloudy"; 
 
   return (
@@ -108,8 +133,9 @@ export default function TodayWeather({}: Props) {
       <div className="text-2xl font-bold mb-7">
         <span className="border-b-4 border-black">Today Weather</span>
       </div>
-      <div className="text-2xl font-bold">
-        Monday <span className="text-lg font-normal">(26.08.2024)</span>
+      <div className="text-2xl flex flex-row font-bold">
+        <span className="text-2xl ">{new Date(currentDate).toLocaleDateString('en-US', { weekday: 'long' })}</span>
+        <div className="text-lg mt-1 px-2">{new Date(currentDate).toLocaleDateString('en-US')}</div>
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3 items-center">
         <div className="p-5 bg-white rounded-md shadow-md flex flex-col justify-center items-center">
@@ -119,7 +145,7 @@ export default function TodayWeather({}: Props) {
             {minTemperature}° ↓ {maxTemperature}° ↑
           </div>
         </div>
-        <div className="col-span-2 p-4 bg-white rounded-md shadow-md">
+        <div className="col-span-2 p-2 bg-white rounded-md shadow-md">
           <div className="overflow-x-auto">
             <div className="flex">
               {weatherData.hourly.time.map((time, index) => {
