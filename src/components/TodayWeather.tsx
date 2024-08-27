@@ -58,41 +58,42 @@ interface DailyData {
   uv_index_max: number[];
 }
 
+
 export default function TodayWeather({}: Props) {
-  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+    const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+  
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const response = await fetch("http://165.22.215.22/api/location", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              city: "kota",
+              state: "Rajasthan",
+              country: "India",
+            }),
+          });
+  
+          const data = await response.json();
+          console.log(data);
+          setWeatherData(data);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+  
+      fetchData();
+    }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("https://oo7nkv35fx.sharedwithexpose.com/api/location", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            city: "jaipur",
-            state: "Rajasthan",
-            country: "India",
-          }),
-        });
-
-        const data = await response.json();
-        console.log(data);
-        setWeatherData(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  if (!weatherData) return <div>Loading...</div>;
+ if(!weatherData) return <div>Loading...</div>;
 
   const currentTemperature = weatherData.hourly.temperature_2m[0];
   const minTemperature = weatherData.daily.temperature_2m_min[0];
   const maxTemperature = weatherData.daily.temperature_2m_max[0];
-  const weatherDescription = "Partly Cloudy"; // Placeholder; replace with actual weather description if available
+  const weatherDescription = "Partly Cloudy"; 
 
   return (
     <div className="p-4 space-y-4 bg-gray-100">
@@ -103,7 +104,7 @@ export default function TodayWeather({}: Props) {
         Monday <span className="text-lg font-normal">(26.08.2024)</span>
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3 items-center">
-        <div className="p-3 bg-white rounded-md shadow-md flex flex-col justify-center items-center">
+        <div className="p-5 bg-white rounded-md shadow-md flex flex-col justify-center items-center">
           <div className="text-5xl font-bold">{currentTemperature}°</div>
           <div className="text-sm">Feels like {currentTemperature}°</div>
           <div className="text-sm">
