@@ -44,7 +44,7 @@ export const WeatherHistory = () => {
         useEffect(() => {
             const historyData = async (city: string, state: string, country: string) => {
                 try {
-                    const response = await fetch("http://165.22.215.22/api/history", {
+                    const response = await fetch("https://165.22.215.22/api/history", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
@@ -55,12 +55,8 @@ export const WeatherHistory = () => {
                             country,
                         }),
                     });
-    
                     const data:HistoryWeatherData= await response.json();
-
                     setHistoryWeatherData(data);
-                   
-                    
                 } catch (error) {
                     console.error("Error fetching data:", error);
                 }

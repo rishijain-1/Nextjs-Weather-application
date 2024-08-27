@@ -72,7 +72,7 @@ export default function TodayWeather({}: Props) {
     const [location, setLocation] = useState({ city: "", state: "", country: "" });
     const fetchData = async (city: string, state: string, country: string) => {
       try {
-        const response = await fetch("http://165.22.215.22/api/location", {
+        const response = await fetch("https://165.22.215.22/api/location", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

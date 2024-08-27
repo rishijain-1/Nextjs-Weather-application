@@ -48,7 +48,7 @@ const Forecast: React.FC = () => {
     useEffect(() => {
         const fetchData = async (city: string, state: string, country: string) => {
             try {
-                const response = await fetch(`http://165.22.215.22/api/forecast`, {
+                const response = await fetch(`https://165.22.215.22/api/forecast`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
