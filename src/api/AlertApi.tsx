@@ -1,4 +1,4 @@
-export async function alert(city: string, state: string, country: string){
+export async function fetchWeatherAlert(city: string, state: string, country: string){
     try{
         const response = await fetch(`http://165.22.215.22/api/alert`,{
             method: "POST",
@@ -18,7 +18,7 @@ export async function alert(city: string, state: string, country: string){
 
         const data = await response.json();
 
-        return data;
+        return data.current.condition;
 
     }catch(error){
         console.error("Error fetching data:", error);

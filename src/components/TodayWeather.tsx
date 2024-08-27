@@ -11,8 +11,16 @@ import SunsetIcon from "./icons/SunsetIcon";
 import WindIcon from "./icons/WindIcon";
 import { fetchWeatherData } from "@/api/TodayWeatherApi";
 import { fetchUserLocation } from "@/api/DefaultUserLocationApi";
+import { fetchWeatherAlert } from "@/api/AlertApi";
 
 type Props = {};
+
+interface WeatherCondition {
+  text: string;
+  icon: string;
+  code: number;
+}
+
 
 interface WeatherData {
   latitude: number;
@@ -72,6 +80,7 @@ interface DailyData {
 export default function TodayWeather({}: Props) {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [location, setLocation] = useState({ city: "", state: "", country: "" });
+  const [Alertupdate,setAlertupdate] = useState<WeatherCondition|null>(null);
 
     useEffect(() => {
       const loadLocationAndWeather = async () => {
@@ -80,6 +89,9 @@ export default function TodayWeather({}: Props) {
           setLocation(locationData);
           const data = await fetchWeatherData(locationData.city, locationData.state, locationData.country);
           setWeatherData(data);
+          const message = await fetchWeatherAlert(locationData.city, locationData.state, locationData.country);
+          console.log(message);
+          setAlertupdate(message);
         } catch (error) {
           console.error(error);
         }
@@ -129,8 +141,15 @@ export default function TodayWeather({}: Props) {
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <div className="p-4 bg-white rounded-md shadow-md">
-          <div className="text-lg font-bold">{weatherDescription}</div>
-          <CloudIcon className="w-16 h-16 mx-auto" />
+          <div className="text-lg text-white bg-red-600 text-center rounded-md">Alert</div>
+          <div className="text-lg font-bold text-center mb-2">{Alertupdate?.text}</div>
+          {Alertupdate?.icon && (
+              <img
+                src={`https:${Alertupdate.icon}`} 
+                alt={Alertupdate?.text}
+                className="w-16 h-16 mx-auto"
+              />
+            )}
         </div>
         <div className="col-span-2 p-4 bg-yellow-300 rounded-md shadow-md">
           <div className="grid grid-cols-6 text-center">
