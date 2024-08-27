@@ -70,29 +70,28 @@ interface DailyData {
 export default function TodayWeather({}: Props) {
     const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
     const [location, setLocation] = useState({ city: "", state: "", country: "" });
-  
-    useEffect(() => {
-      const fetchData = async (city: string, state: string, country: string) => {
-        try {
-          const response = await fetch("http://165.22.215.22/api/location", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              city,
-              state,
-              country,
-            }),
-          });
-  
-          const data = await response.json();
-         
-          setWeatherData(data);
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        }
-      };
+    const fetchData = async (city: string, state: string, country: string) => {
+      try {
+        const response = await fetch("http://165.22.215.22/api/location", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            city,
+            state,
+            country,
+          }),
+        });
+
+        const data = await response.json();
+       
+        setWeatherData(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    useEffect(() => {  
       const fetchLocation = () => {
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(async (position) => {
@@ -184,7 +183,7 @@ export default function TodayWeather({}: Props) {
             <div>
               <div className="text-sm">Air Pressure</div>
               <GaugeIcon className="w-8 h-8 mx-auto" />
-              <div>1013 hPa</div> {/* Placeholder for air pressure */}
+              <div>1013 hPa</div> 
             </div>
             <div>
               <div className="text-sm">Sunrise</div>
