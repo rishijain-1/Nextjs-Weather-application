@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import DayWeather from './DayWeather';
 import Loading from './Loader/Loading';
+import { fetchHistoryWeather } from '@/api/HistoryApi';
 
 type HistoryWeatherData = {
     latitude: number;
@@ -42,25 +43,7 @@ export const WeatherHistory = () => {
 
     
         useEffect(() => {
-            const historyData = async (city: string, state: string, country: string) => {
-                try {
-                    const response = await fetch("https://165.22.215.22/api/history", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                            city,
-                            state,
-                            country,
-                        }),
-                    });
-                    const data:HistoryWeatherData= await response.json();
-                    setHistoryWeatherData(data);
-                } catch (error) {
-                    console.error("Error fetching data:", error);
-                }
-            };
+        
             const fetchLocation = () => {
                 if (navigator.geolocation) {
                   navigator.geolocation.getCurrentPosition(async (position) => {
@@ -75,7 +58,8 @@ export const WeatherHistory = () => {
           
                       setLocation({ city, state, country });
                       console.log(city,state,country);
-                      historyData(city, state, country);
+                      const data = await fetchHistoryWeather(city, state, country); // Use the utility function
+                        setHistoryWeatherData(data);
                     } catch (error) {
                       console.error("Error fetching location data:", error);
                     }

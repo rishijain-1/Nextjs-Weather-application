@@ -6,6 +6,7 @@ import HourlyWeather from './HourlyWeather';
 import CloudRainIcon from './icons/CloudRainIcon';
 import CloudIcon from './icons/CloudIcon';
 import Loading from './Loader/Loading';
+import { fetchForecastWeather } from '@/api/ForcastApi';
 
 type DailyWeatherData = {
     time: string[];
@@ -46,28 +47,6 @@ const Forecast: React.FC = () => {
     const [location, setLocation] = useState({ city: "", state: "", country: "" });
 
     useEffect(() => {
-        const fetchData = async (city: string, state: string, country: string) => {
-            try {
-                const response = await fetch(`https://165.22.215.22/api/forecast`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        city,
-                        state,
-                        country,
-                    }),
-                });
-
-                const data: ForcastWeatherData = await response.json();
-                console.log(data);
-                setForecastWeatherData(data);
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        };
-
         const fetchLocation = () => {
             if (navigator.geolocation) {
               navigator.geolocation.getCurrentPosition(async (position) => {
@@ -82,7 +61,8 @@ const Forecast: React.FC = () => {
       
                   setLocation({ city, state, country });
                   console.log(city, state, country);
-                  fetchData(city, state, country);
+                  const data = await fetchForecastWeather(city, state, country); // Use the utility function
+                  setForecastWeatherData(data);
                 } catch (error) {
                   console.error("Error fetching location data:", error);
                 }

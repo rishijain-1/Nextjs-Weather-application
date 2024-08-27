@@ -9,6 +9,7 @@ import EyeIcon from "./icons/EyeIcon";
 import GaugeIcon from "./icons/GaugeIcon";
 import SunsetIcon from "./icons/SunsetIcon";
 import WindIcon from "./icons/WindIcon";
+import { fetchWeatherData } from "@/api/TodayWeatherApi";
 
 type Props = {};
 
@@ -68,45 +69,27 @@ interface DailyData {
 
 
 export default function TodayWeather({}: Props) {
-    const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
-    const [location, setLocation] = useState({ city: "", state: "", country: "" });
-    const fetchData = async (city: string, state: string, country: string) => {
-      try {
-        const response = await fetch("https://165.22.215.22/api/location", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            city,
-            state,
-            country,
-          }),
-        });
+  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+  const [location, setLocation] = useState({ city: "", state: "", country: "" });
 
-        const data = await response.json();
-       
-        setWeatherData(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    useEffect(() => {  
+    useEffect(() => {
       const fetchLocation = () => {
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(async (position) => {
             const { latitude, longitude } = position.coords;
-            
+  
             try {
-              const geocodeResponse = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`);
+              const geocodeResponse = await fetch(
+                `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+              );
               const geocodeData = await geocodeResponse.json();
               const city = geocodeData.city;
               const state = geocodeData.principalSubdivision;
               const country = geocodeData.countryName;
   
               setLocation({ city, state, country });
-              console.log(city,state,country);
-              fetchData(city, state, country);
+              const data = await fetchWeatherData(city, state, country);
+              setWeatherData(data);
             } catch (error) {
               console.error("Error fetching location data:", error);
             }
@@ -119,7 +102,7 @@ export default function TodayWeather({}: Props) {
       fetchLocation();
     }, []);
 
- if(!weatherData) return <div className="flex justify-center items-center h-screen"><Loading/></div>;
+    if (!weatherData)  return <div className="flex justify-center items-center h-screen"><Loading/></div>;
 
   const currentTemperature = weatherData.hourly.temperature_2m[0];
   const minTemperature = weatherData.daily.temperature_2m_min[0];
