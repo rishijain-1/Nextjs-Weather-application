@@ -1,6 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import HourlyWeather from "./HourlyWeather";
+import Loading from "./Loader/Loading";
+import CloudIcon from "./icons/CLoudIcon";
+import CloudRainIcon from "./icons/CloudRainIcon";
+import DropletIcon from "./icons/DropletIcon";
+import EyeIcon from "./icons/EyeIcon";
+import GaugeIcon from "./icons/GaugeIcon";
+import SunsetIcon from "./icons/SunsetIcon";
+import WindIcon from "./icons/WindIcon";
 
 type Props = {};
 
@@ -88,7 +96,7 @@ export default function TodayWeather({}: Props) {
       fetchData();
     }, []);
 
- if(!weatherData) return <div>Loading...</div>;
+ if(!weatherData) return <div className="flex justify-center items-center h-screen"><Loading/></div>;
 
   const currentTemperature = weatherData.hourly.temperature_2m[0];
   const minTemperature = weatherData.daily.temperature_2m_min[0];
@@ -168,141 +176,4 @@ export default function TodayWeather({}: Props) {
     </div>
   );
 
-  function CloudIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-      <svg
-        {...props}
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />
-      </svg>
-    );
-  }
-
-  function CloudRainIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-      <svg
-        {...props}
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242" />
-        <path d="M16 14v6" />
-        <path d="M8 14v6" />
-        <path d="M12 16v6" />
-      </svg>
-    );
-  }
-
-  function DropletIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-      <svg
-        {...props}
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z" />
-      </svg>
-    );
-  }
-
-  function EyeIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-      <svg
-        {...props}
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <circle cx="12" cy="12" r="3" />
-        <path d="M21 12c-2.5 4-5.5 6-9 6s-6.5-2-9-6 4.5-6 9-6 6.5 2 9 6z" />
-      </svg>
-    );
-  }
-
-  function WindIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-      <svg
-        {...props}
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M17.2 10.8a2.6 2.6 0 0 0-5.2 0c0 2.6 3.9 2.6 3.9 5.2s-3.9 2.6-3.9 0M6.1 12H17M6.1 8h9.1" />
-      </svg>
-    );
-  }
-
-  function GaugeIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-      <svg
-        {...props}
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M12 21C7 21 2.5 18.5 1 14 2.5 9.5 7 7 12 7s9.5 2.5 11 7c-1.5 4.5-6 7-11 7z" />
-        <path d="M12 7v14M12 7l-6 6M12 7l6 6" />
-      </svg>
-    );
-  }
-
-  function SunsetIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-      <svg
-        {...props}
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M3 18h18M12 2v7m5-3l-5 5-5-5m-6 8h18M3 22h18" />
-      </svg>
-    );
-  }
 }
