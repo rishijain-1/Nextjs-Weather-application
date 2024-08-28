@@ -1,5 +1,5 @@
 import { headers } from 'next/headers';
-import { fetchWeatherData,fetchForcastWeather, fetchHistoryWeatherData } from '@/lib/utils';
+import { fetchWeatherData,fetchForcastWeather, fetchHistoryWeatherData,fetchAlertsWeatherData } from '@/lib/utils';
 import TodayWeather from './TodayWeather'; 
 import Forecast from './Forcast';
 import { WeatherHistory } from './WeatherHistory';
@@ -8,8 +8,6 @@ export default async function WeatherReport() {
     const headerList = headers();
     const ip = headerList.get('x-forwarded-for') || ':1'
     const isIpLocal = ['::1', ':1'].includes(ip)
-   
-    
     let locationData: Record<string, string>|null = null;
 
     if (!isIpLocal) {
@@ -25,14 +23,15 @@ export default async function WeatherReport() {
 
     const weatherData = await fetchWeatherData({type: 'locality', data: locationData});
     const forecastWeatherData = await fetchForcastWeather({type: 'locality', data: locationData});
-    const HistoryWeatherData= await fetchHistoryWeatherData({type: 'locality', data:locationData})
-    console.log(forecastWeatherData);
+    const historyWeatherData= await fetchHistoryWeatherData({type: 'locality', data:locationData})
+   const alertWeatherData = await fetchAlertsWeatherData({type: 'locality',data:locationData})
 
     return !isIpLocal ? (
         <div>
-            {locationData && <TodayWeather weatherData={weatherData} locationData={locationData}/>}
+            <div>{ip}</div>
+            {locationData && <TodayWeather weatherData={weatherData} locationData={locationData} alertData={alertWeatherData}/>}
             <Forecast forecastWeatherData={forecastWeatherData} />
-            <WeatherHistory HistoryWeatherData={HistoryWeatherData}/>
+            <WeatherHistory HistoryWeatherData={historyWeatherData}/>
         </div>
     ) : null;
 }
