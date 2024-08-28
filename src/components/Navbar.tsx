@@ -1,7 +1,7 @@
 import React from 'react';
 import { MdWbSunny, MdMyLocation, MdOutlineLocationOn } from 'react-icons/md';
 
-export default function Navbar({}: Props) {
+export default function Navbar() {
   return (
     <div className="shadow-sm sticky top-0 left-0 z-50 bg-white">
         <div className="h-[80px] w-full flex justify-between items-center max-w-7xl px-3 mx-auto">
