@@ -17,13 +17,25 @@ export default async function CityWeather({ searchParams }: { searchParams: { ci
       } as Record<string, string> | null;
      
 
+    const weatherData = await fetchWeatherData({type: 'locality', data: LocationData});
+    const forecastWeatherData = await fetchForcastWeather({type: 'locality', data: LocationData});
+    const historyWeatherData= await fetchHistoryWeatherData({type: 'locality', data:LocationData})
+   const alertWeatherData = await fetchAlertsWeatherData({type: 'locality',data:LocationData})
    
   
 
   return (
     <div>
        
-        <h1>hello</h1>
+        {LocationData && (
+            <TodayWeather 
+                weatherData={weatherData} 
+                locationData={LocationData} 
+                alertData={alertWeatherData}
+            />
+        )}
+        <Forecast forecastWeatherData={forecastWeatherData} />
+        <WeatherHistory HistoryWeatherData={historyWeatherData} />
     </div>
   );
 }
