@@ -36,7 +36,7 @@ const Forecast = ({ forecastWeatherData }: Props) => {
 
     forecastWeatherData.hourly.forEach((hourData) => {
       const date = hourData.time.split('T')[0];
-      const time = hourData.time.split('T')[1].split('+')[0];
+      const time = hourData.time;
       const temperature = hourData.temprature_2m;
       const precipitation = hourData.precipitation;
 
@@ -70,6 +70,7 @@ const Forecast = ({ forecastWeatherData }: Props) => {
                 <div className="overflow-x-auto">
                   <div className="flex">
                     {hourlyDataForDay.map((hourData, hourIndex) => {
+                      const time =hourData.time
                       const icon =
                         hourData.precipitation > 0 ? (
                           <CloudRainIcon className="w-8 h-8" />
@@ -80,7 +81,7 @@ const Forecast = ({ forecastWeatherData }: Props) => {
                       return (
                         <HourlyWeather
                           key={hourIndex}
-                          time={hourData.time}
+                          time={time}
                           temperature={hourData.temperature}
                           icon={icon}
                         />

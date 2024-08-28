@@ -105,6 +105,7 @@ export default function TodayWeather({ weatherData, locationData }: Props) {
           <div className="overflow-x-auto">
               <div className="flex">
                   {weatherData.hourly.map((hour, index) => {
+                    
                       const time = hour.time;
                       const temp = hour.temperature;
                       const icon = hour.precipitation> 0 
