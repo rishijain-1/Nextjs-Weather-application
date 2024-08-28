@@ -44,6 +44,7 @@ type WeatherData = {
 };
 
 export default function TodayWeather({ weatherData, locationData, alertData }: Props) {
+    
     if (!weatherData) {
         return <div className="flex justify-center items-center h-screen"><h1>No data Found</h1></div>;
     }

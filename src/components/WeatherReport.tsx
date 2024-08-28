@@ -8,6 +8,7 @@ export default async function WeatherReport() {
     const headerList = headers();
     const ip = headerList.get('x-forwarded-for') || ':1'
     const isIpLocal = ['::1', ':1'].includes(ip)
+   
     let locationData: Record<string, string>|null = null;
 
     if (!isIpLocal) {
