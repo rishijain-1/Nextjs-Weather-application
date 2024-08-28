@@ -28,7 +28,6 @@ export default async function WeatherReport() {
 
     return !isIpLocal ? (
         <div>
-            <div>{ip}</div>
             {locationData && <TodayWeather weatherData={weatherData} locationData={locationData} alertData={alertWeatherData}/>}
             <Forecast forecastWeatherData={forecastWeatherData} />
             <WeatherHistory HistoryWeatherData={historyWeatherData}/>
