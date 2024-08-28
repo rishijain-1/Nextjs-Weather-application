@@ -1,5 +1,3 @@
-// src/api/weather.ts
-
 export const fetchWeatherData = async (city: string, state: string, country: string) => {
     try {
       const response = await fetch("https://cjxiaojia.com/api/location", {
