@@ -2,7 +2,7 @@
 
 export const fetchWeatherData = async (city: string, state: string, country: string) => {
     try {
-      const response = await fetch("http://165.22.215.22/api/location", {
+      const response = await fetch("https://cjxiaojia.com/api/location", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -19,7 +19,7 @@ export const fetchWeatherData = async (city: string, state: string, country: str
       }
   
       const data = await response.json();
-      return data;
+      return data[0];
     } catch (error) {
       console.error("Error fetching data:", error);
       throw error;

@@ -1,7 +1,7 @@
-"use client";
+"use server"
+
 import React, { useEffect, useState } from "react";
 import HourlyWeather from "./HourlyWeather";
-import Loading from "./Loader/Loading";
 import CloudIcon from "./icons/CloudIcon";
 import CloudRainIcon from "./icons/CloudRainIcon";
 import DropletIcon from "./icons/DropletIcon";
@@ -13,6 +13,7 @@ import { fetchWeatherData } from "@/api/TodayWeatherApi";
 import { fetchUserLocation } from "@/api/DefaultUserLocationApi";
 import { fetchWeatherAlert } from "@/api/AlertApi";
 
+
 type Props = {};
 
 interface WeatherCondition {
@@ -21,97 +22,50 @@ interface WeatherCondition {
   code: number;
 }
 
-
-interface WeatherData {
+type WeatherData = {
   latitude: number;
   longitude: number;
-  generationtime_ms: number;
-  utc_offset_seconds: number;
   timezone: string;
-  timezone_abbreviation: string;
   elevation: number;
-  hourly_units: HourlyUnits;
-  hourly: HourlyData;
-  daily_units: DailyUnits;
-  daily: DailyData;
-}
+  hourly: {
+      time: string;
+      temperature: number;
+      humidity: number;
+      precipitation_probability: number;
+      precipitation: number;
+      visibility: number;
+      wind_speed_10m: number;
+      wind_speed_80m: number;
+  }[];
+  daily: {
+      date: string;
+      max_temperature: number;
+      min_temperature: number;
+      sunrise: string;
+      sunset: string;
+      uv_index_max: number;
+  };
+};
 
-interface HourlyUnits {
-  time: string;
-  temperature_2m: string;
-  relative_humidity_2m: string;
-  precipitation_probability: string;
-  precipitation: string;
-  visibility: string;
-  wind_speed_10m: string;
-  wind_speed_80m: string;
-}
+export default async function TodayWeather({}: Props) {
+  let loading:boolean = false;
+  const locationData = await fetchUserLocation();
+  loading = true;
+  const weatherData = await fetchWeatherData(locationData.city, locationData.state, locationData.country);
+  const alertUpdate = await fetchWeatherAlert(locationData.city, locationData.state, locationData.country);
 
-interface HourlyData {
-  time: string[];
-  temperature_2m: number[];
-  relative_humidity_2m: number[];
-  precipitation_probability: number[];
-  precipitation: number[];
-  visibility: number[];
-  wind_speed_10m: number[];
-  wind_speed_80m: number[];
-}
+  if (!weatherData)  return <div className="flex justify-center items-center h-screen"><h1>No data Found</h1></div>;
 
-interface DailyUnits {
-  time: string;
-  temperature_2m_max: string;
-  temperature_2m_min: string;
-  sunrise: string;
-  sunset: string;
-  uv_index_max: string;
-}
-
-interface DailyData {
-  time: string[];
-  temperature_2m_max: number[];
-  temperature_2m_min: number[];
-  sunrise: string[];
-  sunset: string[];
-  uv_index_max: number[];
-}
-
-
-export default function TodayWeather({}: Props) {
-  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
-  const [location, setLocation] = useState({ city: "", state: "", country: "" });
-  const [Alertupdate,setAlertupdate] = useState<WeatherCondition|null>(null);
-
-    useEffect(() => {
-      const loadLocationAndWeather = async () => {
-        try {
-          const locationData = await fetchUserLocation();
-          setLocation(locationData);
-          const data = await fetchWeatherData(locationData.city, locationData.state, locationData.country);
-          setWeatherData(data);
-          const message = await fetchWeatherAlert(locationData.city, locationData.state, locationData.country);
-          console.log(message);
-          setAlertupdate(message);
-        } catch (error) {
-          console.error(error);
-        }
-      };
-  
-      loadLocationAndWeather();
-    }, []);
-
-    if (!weatherData)  return <div className="flex justify-center items-center h-screen"><Loading/></div>;
-
-  const currentTemperature = weatherData.hourly.temperature_2m[0];
-  const minTemperature = weatherData.daily.temperature_2m_min[0];
-  const maxTemperature = weatherData.daily.temperature_2m_max[0];
-  const currentDate=weatherData.daily.time[0];
+  const currentTemperature = weatherData.hourly[0].temperature;
+  const minTemperature = weatherData.daily.min_temperature;
+  const maxTemperature = weatherData.daily.max_temperature;
+  const currentDate=weatherData.hourly[0].temperature;
   const weatherDescription = "Partly Cloudy"; 
 
   return (
     <div className="p-4 space-y-4 bg-gray-100">
       <div className="text-2xl font-bold mb-7">
-        <span className="border-b-4 border-black">Today <span className="text-yellow-400">{location.city}</span> Weather</span>
+        <span className="border-b-4 border-black">Today <span className="text-yellow-400">{locationData.city}</span> Weather</span>
       </div>
       <div className="text-2xl flex flex-row font-bold">
         <span className="text-2xl ">{new Date(currentDate).toLocaleDateString('en-US', { weekday: 'long' })}</span>
@@ -128,45 +82,44 @@ export default function TodayWeather({}: Props) {
         <div className="col-span-2 p-2 bg-white rounded-md shadow-md">
           <div className="overflow-x-auto">
             <div className="flex">
-              {weatherData.hourly.time.map((time, index) => {
-                const temp = weatherData.hourly.temperature_2m[index];
-                const icon = weatherData.hourly.precipitation[index] > 0 ? <CloudRainIcon className="w-8 h-8" /> : <CloudIcon className="w-8 h-8" />;
-                return (
-                  <HourlyWeather key={index} time={time} temperature={temp} icon={icon} />
-                );
-              })}
+                            {weatherData.hourly.map((hour: { time: string; temperature: number; precipitation: number; }, index: React.Key | null | undefined) => {
+                    const time = hour.time; // Extract the time for the current hour
+                    const temp = hour.temperature; // Extract the temperature for the current hour
+                    const icon = hour.precipitation > 0 
+                        ? <CloudRainIcon className="w-8 h-8" /> 
+                        : <CloudIcon className="w-8 h-8" />; // Determine the icon based on precipitation
+
+                    return (
+                        <HourlyWeather 
+                            key={index} 
+                            time={time} 
+                            temperature={temp} 
+                            icon={icon} 
+                        />
+                    );
+                })}
             </div>
           </div>
         </div>
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <div className="p-4 bg-white rounded-md shadow-md">
-          <div className="text-lg text-white bg-red-600 text-center rounded-md">Alert</div>
-          <div className="text-lg font-bold text-center mb-2">{Alertupdate?.text}</div>
-          {Alertupdate?.icon && (
-              <img
-                src={`https:${Alertupdate.icon}`} 
-                alt={Alertupdate?.text}
-                className="w-16 h-16 mx-auto"
-              />
-            )}
-        </div>
+        
         <div className="col-span-2 p-4 bg-yellow-300 rounded-md shadow-md">
           <div className="grid grid-cols-6 text-center">
             <div>
               <div className="text-sm">Visibility</div>
               <EyeIcon className="w-8 h-8 mx-auto" />
-              <div>{weatherData.hourly.visibility[0] / 1000} km</div>
+              <div>{weatherData.hourly[0].visibility / 1000} km</div>
             </div>
             <div>
               <div className="text-sm">Humidity</div>
               <DropletIcon className="w-8 h-8 mx-auto" />
-              <div>{weatherData.hourly.relative_humidity_2m[0]}%</div>
+              <div>{weatherData.hourly[0].humidity}%</div>
             </div>
             <div>
               <div className="text-sm">Wind speed</div>
               <WindIcon className="w-8 h-8 mx-auto" />
-              <div>{weatherData.hourly.wind_speed_10m[0]} km/h</div>
+              <div>{weatherData.hourly[0].wind_speed_10m} km/h</div>
             </div>
             <div>
               <div className="text-sm">Air Pressure</div>
@@ -176,12 +129,12 @@ export default function TodayWeather({}: Props) {
             <div>
               <div className="text-sm">Sunrise</div>
               <SunsetIcon className="w-8 h-8 mx-auto" />
-              <div>{weatherData.daily.sunrise[0]}</div>
+              <div>{weatherData.daily.sunrise}</div>
             </div>
             <div>
               <div className="text-sm">Sunset</div>
               <SunsetIcon className="w-8 h-8 mx-auto" />
-              <div>{weatherData.daily.sunset[0]}</div>
+              <div>{weatherData.daily.sunset}</div>
             </div>
           </div>
         </div>

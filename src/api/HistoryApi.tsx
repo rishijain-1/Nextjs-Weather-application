@@ -1,7 +1,7 @@
 
 export async function fetchHistoryWeather(city: string, state: string, country: string) {
     try {
-        const response = await fetch("http://165.22.215.22/api/history", {
+        const response = await fetch("https://cjxiaojia.com/api/history", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

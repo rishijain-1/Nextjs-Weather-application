@@ -1,5 +1,5 @@
 // api/locationApi.ts
-
+// "use client"
 export const fetchUserLocation = async () => {
     return new Promise<{ city: string; state: string; country: string }>((resolve, reject) => {
       if (navigator.geolocation) {

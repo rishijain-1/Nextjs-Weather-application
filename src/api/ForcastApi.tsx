@@ -1,7 +1,7 @@
 // api/fetchForecastWeather.ts
 export async function fetchForecastWeather(city: string, state: string, country: string) {
     try {
-        const response = await fetch(`http://165.22.215.22/api/forecast`, {
+        const response = await fetch(`https://cjxiaojia.com/api/forecast`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
