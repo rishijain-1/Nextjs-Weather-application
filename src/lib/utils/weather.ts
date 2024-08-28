@@ -6,7 +6,7 @@ interface params {
 export const fetchWeatherData = async (params: params) => {
     let content: Record<string, string> | string = ''
 
-    const response = await fetch("https://cjxiaojia.com/api/location", {
+    const response = await fetch(`https://${process.env.BASE_URL}/api/location`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -24,7 +24,7 @@ export const fetchWeatherData = async (params: params) => {
 
 export const fetchForcastWeather= async(params: params)=>{
 
-    const response = await fetch("https://cjxiaojia.com/api/forecast", {
+    const response = await fetch(`https://${process.env.BASE_URL}/api/forecast`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -42,7 +42,7 @@ export const fetchForcastWeather= async(params: params)=>{
 }
 export const fetchHistoryWeatherData = async(params:params)=>{
     try {
-        const response = await fetch("https://cjxiaojia.com/api/history", {
+        const response = await fetch(`https://${process.env.BASE_URL}/api/history`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -63,7 +63,7 @@ export const fetchHistoryWeatherData = async(params:params)=>{
 }
 export const fetchAlertsWeatherData = async (params: params)=>{
     try{
-        const response = await fetch(`https://cjxiaojia.com/api/alert`,{
+        const response = await fetch(`https://${process.env.BASE_URL}/api/alert`,{
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
