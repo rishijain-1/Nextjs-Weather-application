@@ -44,7 +44,7 @@ export default async function WeatherReport() {
                     {locationData && <TodayWeather weatherData={weatherData} locationData={locationData} alertData={alertWeatherData} />}
                     <Forecast forecastWeatherData={forecastWeatherData} />
                     <WeatherHistory historyWeatherData={historyWeatherData} />
-                    <Footer />
+                  
                 </>
             ) : (
                 <div><Loading/></div>
