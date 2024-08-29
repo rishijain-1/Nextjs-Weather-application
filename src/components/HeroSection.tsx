@@ -17,7 +17,10 @@ export default function HeroSection() {
                 `https://api.geoapify.com/v1/geocode/autocomplete?text=${query}&format=json&apiKey=07a421da47de4677978182f0c6246538`
             );
             const data = await response.json();
-            setSuggestions(data.results || []);
+            const filteredSuggestions = data.results.filter(
+                (result: any) => result.country === 'India'
+            );
+            setSuggestions(filteredSuggestions || []);
         } else {
             setSuggestions([]);
         }

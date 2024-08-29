@@ -71,8 +71,8 @@ export default function TodayWeather({ weatherData, locationData, alertData }: P
                 <span className="border-b-4 border-black">Today <span className="text-yellow-400">{locationData.city}</span> Weather</span>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-2 gap-4 items-center">
-                <div className="p-5 bg-white rounded-md shadow-md flex flex-col justify-center items-center">
-                    <div className="text-5xl font-bold">{currentTemperature}°</div>
+                <div className="p-4 bg-white rounded-md shadow-md flex flex-col justify-center items-center">
+                    <div className="text-4xl font-bold">{currentTemperature}°</div>
                     <div className="text-sm">Feels like {currentTemperature}°</div>
                     <div className="text-sm">
                         {minTemperature}° ↓ {maxTemperature}° ↑

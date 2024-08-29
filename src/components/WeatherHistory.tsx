@@ -25,17 +25,17 @@ interface HourlyWeatherData {
   }
   
 type Props = {
-    HistoryWeatherData: WeatherData;
+    historyWeatherData: WeatherData;
 };
 
-export const WeatherHistory = ({ HistoryWeatherData }: Props) => {
+export const WeatherHistory = ({ historyWeatherData }: Props) => {
     return (
         <div className="p-4 space-y-4 bg-gray-100">
             <div className="text-2xl font-bold mb-7">
                 7-Days Weather History
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7">
-           { HistoryWeatherData.daily.map((date,index) => {
+           { historyWeatherData.daily.map((date,index) => {
                     return(<DayWeather
                         key={index}
                         date={date.time}

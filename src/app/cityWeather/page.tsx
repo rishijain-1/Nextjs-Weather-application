@@ -1,7 +1,8 @@
 // app/cityWeather/page.tsx
 
+import Footer from '@/components/footer';
 import Forecast from '@/components/Forcast';
-import Loading from '@/components/Loader/Loading';
+import Navbar from '@/components/Navbar';
 import TodayWeather from '@/components/TodayWeather';
 import { WeatherHistory } from '@/components/WeatherHistory';
 import { fetchAlertsWeatherData, fetchForcastWeather, fetchHistoryWeatherData, fetchWeatherData } from '@/lib/utils';
@@ -26,16 +27,21 @@ export default async function CityWeather({ searchParams }: { searchParams: { ci
 
   return (
     <div>
-       
-        {LocationData && (
-            <TodayWeather 
-                weatherData={weatherData} 
-                locationData={LocationData} 
-                alertData={alertWeatherData}
-            />
-        )}
-        <Forecast forecastWeatherData={forecastWeatherData} />
-        <WeatherHistory HistoryWeatherData={historyWeatherData} />
+      <Navbar/>
+      <div className="p-4">
+        
+          {LocationData && (
+              <TodayWeather 
+                  weatherData={weatherData} 
+                  locationData={LocationData} 
+                  alertData={alertWeatherData}
+              />
+          )}
+          <Forecast forecastWeatherData={forecastWeatherData} />
+          <WeatherHistory historyWeatherData={historyWeatherData} />
+          
+      </div>
+      <Footer/>
     </div>
   );
 }
