@@ -57,20 +57,20 @@ export default function TodayWeather({ weatherData, locationData, alertData }: P
     const sunset = weatherData.daily.sunset.split('T')[1];
 
     return (
-        <div className="p-4 space-y-4 bg-gray-100">
+                <div className="p-4 space-y-4 bg-gray-100">
             {alertData.message && alertData.message !== 'No alert found' && (
                 <div className="p-4 bg-red-200 text-red-800 border border-red-300 rounded-md">
                     {alertData.message}
                 </div>
             )}
             <div className="text-2xl flex flex-col md:flex-row font-bold text-center md:text-left">
-                <span className="">{new Date(currentDate).toLocaleDateString('en-US', { weekday: 'long' })}</span>
+                <span>{new Date(currentDate).toLocaleDateString('en-US', { weekday: 'long' })}</span>
                 <div className="text-lg mt-1 md:mt-0 md:px-2">{new Date(currentDate).toLocaleDateString('en-US')}</div>
             </div>
             <div className="text-2xl font-bold mb-7 text-center md:text-left">
                 <span className="border-b-4 border-black">Today <span className="text-yellow-400">{locationData.city}</span> Weather</span>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-2 gap-4 items-center">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
                 <div className="p-4 bg-white rounded-md shadow-md flex flex-col justify-center items-center">
                     <div className="text-4xl font-bold">{currentTemperature}°</div>
                     <div className="text-sm">Feels like {currentTemperature}°</div>
@@ -78,9 +78,9 @@ export default function TodayWeather({ weatherData, locationData, alertData }: P
                         {minTemperature}° ↓ {maxTemperature}° ↑
                     </div>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-yellow-300 rounded-md shadow-md">
-                    <div className="col-span-2 w-full md:col-span-7 p-4">
-                        <div className="grid grid-cols-3 md:grid-cols-6 text-center gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-yellow-300 rounded-md shadow-md">
+                    <div className="col-span-2 sm:col-span-4 p-4">
+                        <div className="grid grid-cols-3 sm:grid-cols-6 text-center gap-2">
                             <div>
                                 <div className="text-sm">Visibility</div>
                                 <EyeIcon className="w-8 h-8 mx-auto" />
@@ -115,9 +115,9 @@ export default function TodayWeather({ weatherData, locationData, alertData }: P
                     </div>
                 </div>
             </div>
-            <div className="col-span-2 p-2 bg-white rounded-md shadow-md">
+            <div className="p-2 bg-white rounded-md shadow-md">
                 <div className="overflow-x-auto">
-                    <div className="flex">
+                    <div className="flex space-x-2">
                         {weatherData.hourly.map((hour, index) => {
                             const time = hour.time;
                             const temp = hour.temperature;
@@ -138,5 +138,6 @@ export default function TodayWeather({ weatherData, locationData, alertData }: P
                 </div>
             </div>
         </div>
+
     );
 }
