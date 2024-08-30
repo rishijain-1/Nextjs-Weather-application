@@ -14,7 +14,7 @@ export default function HeroSection() {
 
         if (query.length > 2) { 
             const response = await fetch(
-                `https://api.geoapify.com/v1/geocode/autocomplete?text=${query}&format=json&apiKey=07a421da47de4677978182f0c6246538`
+                `https://api.geoapify.com/v1/geocode/autocomplete?text=${query}&format=json&apiKey=${process.env.NEXT_PUBLIC_GEOAPIFY_API_KEY}`
             );
             const data = await response.json();
             setSuggestions(data.results || []);
