@@ -3,7 +3,6 @@ import { fetchWeatherData, fetchForcastWeather, fetchHistoryWeatherData, fetchAl
 import TodayWeather from './TodayWeather'; 
 import Forecast from './Forcast';
 import { WeatherHistory } from './WeatherHistory';
-import Footer from './footer';
 import Loading from './Loader/Loading';
 
 export default async function WeatherReport() {
@@ -36,7 +35,6 @@ export default async function WeatherReport() {
         return <div>Error loading data.</div>;
     }
 
-   
     return !isIpLocal ? (
         <div>
             {weatherData && forecastWeatherData && historyWeatherData && alertWeatherData ? (
